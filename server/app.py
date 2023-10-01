@@ -3,11 +3,14 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from flask import Flask, jsonify, request, make_response, render_template
+from flask import Flask, jsonify, request, make_response, render_template,session
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
+from sqlalchemy.exc import IntegrityError
 
-from models import db, Bird
+from models import User
+
+from config import app, db, api
 
 app = Flask(
     __name__,
@@ -29,58 +32,87 @@ def not_found(e):
 
 api = Api(app)
 
-class Birds(Resource):
-
-    def get(self):
-        birds = [bird.to_dict() for bird in Bird.query.all()]
-        return make_response(jsonify(birds), 200)
+class Signup(Resource):
 
     def post(self):
+        json = request.get_json()
 
-        data = request.get_json()
+        username = json.get("username")
+        password = json.get("password")
+        image_url = json.get("image_url")
+        bio = json.get("bio")
 
-        new_bird = Bird(
-            name=data['name'],
-            species=data['species'],
-            image=data['image'],
-        )
+        user = User(username=username, image_url=image_url, bio=bio)
 
-        db.session.add(new_bird)
-        db.session.commit()
+        user.password_hash = password
 
-        return make_response(new_bird.to_dict(), 201)
+        try:
+                db.session.add(user)
+                db.session.commit()
 
-api.add_resource(Birds, '/birds')
+                session["user_id"] = user.id
 
-class BirdByID(Resource):
-    
-    def get(self, id):
-        bird = Bird.query.filter_by(id=id).first().to_dict()
-        return make_response(jsonify(bird), 200)
+                print(user.to_dict())
 
-    def patch(self, id):
+                return user.to_dict(), 201
 
-        data = request.get_json()
+        except IntegrityError:
+                return {"error": "422 Unprocessable Entity"}, 422
 
-        bird = Bird.query.filter_by(id=id).first()
 
-        for attr in data:
-            setattr(bird, attr, data[attr])
+class CheckSession(Resource):
+    def get(self):
+        if session.get("user_id"):
+            user = User.query.filter(User.id == session["user_id"]).first()
 
-        db.session.add(bird)
-        db.session.commit()
+            print(user.to_dict())
+            return user.to_dict(), 200
 
-        return make_response(bird.to_dict(), 200)
+        return {"error": "401 Unauthorized"}, 401
 
-    def delete(self, id):
+class Login(Resource):
+    def post(self):
+        json = request.get_json()
 
-        bird = Bird.query.filter_by(id=id).first()
-        db.session.delete(bird)
-        db.session.commit()
+        username = json.get("username")
+        password = json.get("password")
 
-        return make_response('', 204)
+        user = User.query.filter(User.username == username).first()
 
-api.add_resource(BirdByID, '/birds/<int:id>')
+        if user:
+            if user.authenticate(password):
+                session["user_id"] = user.id
+                return user.to_dict(), 200
+
+        return {"eror": "401 Unauthorized"}, 401
+
+class Logout(Resource):
+    def delete(self):
+        if session.get("user_id"):
+            session["user_id"] = None
+
+            return {}, 204
+
+        return {"error": "401 Unauthorized"}, 401
+
+class Chk(Resource):
+    def get(self):
+        users = User.query.all()
+
+        # Convert users to a list of dictionaries
+        user_list = [user.to_dict() for user in users]
+
+        print(user_list)
+        # Return the list of users with a 200 OK response
+        return user_list, 200
+
+        # return {"error": "401 Unauthorized"}, 401
+
+api.add_resource(Chk, '/all', endpoint='all')
+api.add_resource(Signup, '/signup', endpoint='signup')
+api.add_resource(CheckSession, '/check_session', endpoint='check_session')
+api.add_resource(Login, '/login', endpoint='login')
+api.add_resource(Logout, '/logout', endpoint='logout')
 
 @app.route('/')
 @app.route('/<int:id>')
