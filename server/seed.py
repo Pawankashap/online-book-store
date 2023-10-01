@@ -1,37 +1,46 @@
-from app import app
-from models import db, Bird
+#!/usr/bin/env python3
 
-db.init_app(app)
+from random import randint, choice as rc
+
+from faker import Faker
+
+from app import app
+from models import db, Recipe, User
+
+fake = Faker()
 
 with app.app_context():
 
-    print('Deleting existing birds...')
-    Bird.query.delete()
+    print("Deleting all records...")
+    User.query.delete()
 
-    print('Creating bird objects...')
-    chickadee = Bird(
-        name='Black-Capped Chickadee',
-        species='Poecile Atricapillus',
-        image='/images/black-capped-chickadee.jpeg'
-    )
-    grackle = Bird(
-        name='Grackle',
-        species='Quiscalus Quiscula',
-        image='/images/grackle.jpeg'
-    )
-    starling = Bird(
-        name='Common Starling',
-        species='Sturnus Vulgaris',
-        image='/images/starling.jpeg'
-    )
-    dove = Bird(
-        name='Mourning Dove',
-        species='Zenaida Macroura',
-        image='/images/dove.jpeg'
-    )
+    fake = Faker()
 
-    print('Adding bird objects to transaction...')
-    db.session.add_all([chickadee, grackle, starling, dove])
-    print('Committing transaction...')
+    print("Creating users...")
+
+    # make sure users have unique usernames
+    users = []
+    usernames = []
+
+    for i in range(20):
+        
+        username = fake.first_name()
+        while username in usernames:
+            username = fake.first_name()
+        usernames.append(username)
+
+        user = User(
+            username=username,
+            bio=fake.paragraph(nb_sentences=3),
+            image_url=fake.url(),
+        )
+
+        user.password_hash = user.username + 'password'
+
+        users.append(user)
+
+    db.session.add_all(users)
+ 
+    
     db.session.commit()
-    print('Complete.')
+    print("Complete.")
