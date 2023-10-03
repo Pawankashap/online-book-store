@@ -8,7 +8,7 @@ from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from sqlalchemy.exc import IntegrityError
 
-from models import User
+from models import User,Book,Order,CartItem,Review
 
 from config import app, db, api
 
@@ -22,7 +22,7 @@ app = Flask(
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.json.compact = False
-
+app.secret_key = b'Y\xf1Xz\x00\xad|eQ\x80t \xca\x1a\x10K'
 migrate = Migrate(app, db)
 db.init_app(app)
 
@@ -39,10 +39,11 @@ class Signup(Resource):
 
         username = json.get("username")
         password = json.get("password")
-        image_url = json.get("image_url")
-        bio = json.get("bio")
+        # image_url = json.get("image_url")
+        email = json.get("email")
+        usertype = json.get("usertype")
 
-        user = User(username=username, image_url=image_url, bio=bio)
+        user = User(username=username, email=email, usertype=usertype)
 
         user.password_hash = password
 
@@ -95,20 +96,30 @@ class Logout(Resource):
 
         return {"error": "401 Unauthorized"}, 401
 
-class Chk(Resource):
+class Books(Resource):
     def get(self):
-        users = User.query.all()
+       
+        books = Book.query.all()
+        books_list = [book.to_dict() for book in books]
+        print(books_list)
+        return books_list, 200
 
-        # Convert users to a list of dictionaries
-        user_list = [user.to_dict() for user in users]
+        # return {"error": "401 Unauthorized"}, 401
+class BooksbyID(Resource):
+    def get(self):
+            sessionvalue=1
+        # if session.get("user_id"):
+            # user = User.query.filter(User.id == session["user_id"]).first()
+            user = User.query.filter(User.id == sessionvalue).first()
 
-        print(user_list)
-        # Return the list of users with a 200 OK response
-        return user_list, 200
+            print(user.to_dict())
+            return user.to_dict(), 200
 
         # return {"error": "401 Unauthorized"}, 401
 
-api.add_resource(Chk, '/all', endpoint='all')
+
+api.add_resource(BooksbyID, '/booksbyid', endpoint='booksbyid')
+api.add_resource(Books, '/books', endpoint='books')
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 api.add_resource(Login, '/login', endpoint='login')
