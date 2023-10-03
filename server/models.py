@@ -17,7 +17,7 @@ class User(db.Model, SerializerMixin):
     username = db.Column(db.String, unique=True, nullable=False)
     _password_hash = db.Column(db.String)
     email = db.Column(db.String)
-    
+    usertype=db.Column(db.String, default='u')
 
     books = db.relationship("Book", backref="user")
 
@@ -52,6 +52,7 @@ class Book(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
     author = db.Column(db.String, nullable=False)
+    image_url=db.Column(db.String, nullable=False)
     category = db.Column(db.String, nullable=False)
     description= db.Column(db.String, nullable=False)
     price = db.Column(db.String, nullable=False)
