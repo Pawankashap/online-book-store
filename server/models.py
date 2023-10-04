@@ -59,7 +59,7 @@ class Book(db.Model, SerializerMixin):
     image_url = db.Column(db.String, nullable=False)
     category = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=False)
-    price = db.Column(db.String, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
     sold = db.Column(db.String)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
