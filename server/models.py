@@ -9,7 +9,8 @@ class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
     serialize_rules = (
-        "-books.user",
+        "-books",
+        "-orders",
         "-_password_hash",
     )
 
@@ -17,16 +18,16 @@ class User(db.Model, SerializerMixin):
     username = db.Column(db.String, unique=True, nullable=False)
     _password_hash = db.Column(db.String)
     email = db.Column(db.String)
-    usertype=db.Column(db.String, default='u')
+    usertype = db.Column(db.String, default='u')
 
     books = db.relationship("Book", backref="user")
+    orders = db.relationship("Order", backref="user")
 
     @validates('email')
     def validate_email(self, key, address):
         if '@' not in address:
-            raise ValueError("failed simple email validation")
+            raise ValueError("Failed simple email validation")
         return address
-    
 
     @hybrid_property
     def password_hash(self):
@@ -45,37 +46,32 @@ class User(db.Model, SerializerMixin):
 
 class Book(db.Model, SerializerMixin):
     __tablename__ = 'books'
-    
-    __table_args__ = (db.CheckConstraint("length(description) >= 100"),)
-    serialize_rules = ("-user.books",)
+
+    serialize_rules = (
+        "-cart_items",
+        "-orders"
+    )
+
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
     author = db.Column(db.String, nullable=False)
-    image_url=db.Column(db.String, nullable=False)
+    image_url = db.Column(db.String, nullable=False)
     category = db.Column(db.String, nullable=False)
-    description= db.Column(db.String, nullable=False)
+    description = db.Column(db.String, nullable=False)
     price = db.Column(db.String, nullable=False)
-    sold= db.Column(db.String)
-    # minutes_to_complete = db.Column(db.Integer)
-
+    sold = db.Column(db.String)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
-    cartitems = db.relationship("CartItem", backref="book")
-    reviews = db.relationship("Review", backref="book")
+    cart_items = db.relationship("CartItem", backref="book")
     orders = db.relationship("Order", backref="book")
+
 
     def __repr__(self):
         return f"<Book: {self.id}, {self.title}"
-    
-
-
 
 class Order(db.Model, SerializerMixin):
     __tablename__ = 'orders'
-    
-    # __table_args__ = (db.CheckConstraint("length(instructions) >= 50"),)
-    serialize_rules = ("-user.orders",)
 
     id = db.Column(db.Integer, primary_key=True)
     shippinginfo = db.Column(db.String, nullable=False)
@@ -88,29 +84,11 @@ class Order(db.Model, SerializerMixin):
 
 class CartItem(db.Model, SerializerMixin):
     __tablename__ = 'cartitems'
-    
-    # __table_args__ = (db.CheckConstraint("length(instructions) >= 50"),)
-    serialize_rules = ("-user.cartitems",)
 
     id = db.Column(db.Integer, primary_key=True)
     book_id = db.Column(db.Integer, db.ForeignKey("books.id"))
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
     def __repr__(self):
-        return f"<CartItem: {self.id}" 
-    
-class Review(db.Model, SerializerMixin):
-    __tablename__ = 'reviews'
-    
-    __table_args__ = (db.CheckConstraint("length(comment) <= 250"),)
-    serialize_rules = ("-user.orders",)
+        return f"<CartItem: {self.id}"
 
-    id = db.Column(db.Integer, primary_key=True)
-    rating = db.Column(db.String, nullable=False)
-    comment = db.Column(db.String)
-    book_id = db.Column(db.Integer, db.ForeignKey("books.id"))
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-
-    def __repr__(self):
-        return f"<Review: {self.id}, {self.orderdt}"
- 
