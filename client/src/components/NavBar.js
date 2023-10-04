@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { Button } from "../styles";
+import { Button,Label } from "../styles";
+import { NavLink } from "react-router-dom"
 
 function NavBar({ user, setUser }) {
   function handleLogoutClick() {
@@ -18,9 +19,13 @@ function NavBar({ user, setUser }) {
         <Link to="/">Book Store</Link>
       </Logo>
       <Nav>
-        <Button as={Link} to="/new">
-          New Book
-        </Button>
+        <Button as={Link} to="/">Home</Button>
+        <Button as={Link} to="/books">Books</Button>
+        <Button as={Link} to="/order">Order</Button>
+        <Button as={Link} to="/new">New Book  </Button>
+        <Button variant="outline" as={Link} to="/cart" >Cart Items</Button>
+        <Link className="cartitem" to="/cart">Cart Items</Link>
+        <Label htmlFor="title">{user.username}</Label>
         <Button variant="outline" onClick={handleLogoutClick}>
           Logout
         </Button>
@@ -51,9 +56,11 @@ const Logo = styled.h1`
 
 const Nav = styled.nav`
   display: flex;
-  gap: 4px;
+  gap: 10px;
   position: absolute;
   right: 8px;
 `;
+
+
 
 export default NavBar;
