@@ -5,7 +5,15 @@ import styled from "styled-components";
 import { Button, Error, FormField, Input, Label, Textarea } from "../styles";
 
 function Books({ user }) {
-  const [title, setTitle] = useState("Books");
+  const [title, setTitle] = useState();  
+  const [author, setAuthor] = useState();
+  const [image_url, setImage_url] = useState();
+  const [category, setCategory] = useState();
+  const [description, setDescription] = useState();
+  const [price, setPrice] = useState();
+  const [sold, setSold] = useState("n");
+  // const [user,setUser]= useState()
+
   const [minutesToComplete, setMinutesToComplete] = useState("30");
   const [instructions, setInstructions] = useState(`Here's how you make it.
   
@@ -25,6 +33,7 @@ function Books({ user }) {
   function handleSubmit(e) {
     e.preventDefault();
     setIsLoading(true);
+    console.log({user})
     fetch("/books", {
       method: "POST",
       headers: {
@@ -32,13 +41,19 @@ function Books({ user }) {
       },
       body: JSON.stringify({
         title,
-        instructions,
-        minutes_to_complete: minutesToComplete,
+        author,
+        image_url,
+        category,
+        description,
+        price,
+        sold,  
+        user_id:user.id
       }),
     }).then((r) => {
       setIsLoading(false);
       if (r.ok) {
-        history.push("/");
+        // history.push("/");
+        history('/');
       } else {
         r.json().then((err) => setErrors(err.errors));
       }
@@ -60,23 +75,52 @@ function Books({ user }) {
             />
           </FormField>
           <FormField>
-            <Label htmlFor="minutesToComplete">Minutes to complete</Label>
+            <Label htmlFor="author">Author</Label>
             <Input
-              type="number"
-              id="minutesToComplete"
-              value={minutesToComplete}
-              onChange={(e) => setMinutesToComplete(e.target.value)}
+              type="text"
+              id="author"
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
             />
           </FormField>
           <FormField>
-            <Label htmlFor="instructions">Instructions</Label>
-            <Textarea
-              id="instructions"
-              rows="10"
-              value={instructions}
-              onChange={(e) => setInstructions(e.target.value)}
+            <Label htmlFor="image_url">Image URL</Label>
+            <Input
+              type="text"
+              id="image_url"
+              value={image_url}
+              onChange={(e) => setImage_url(e.target.value)}
             />
           </FormField>
+
+          <FormField>
+            <Label htmlFor="category">Category</Label>
+            <Input
+              type="text"
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            />
+          </FormField>
+          <FormField>
+            <Label htmlFor="description">Description</Label>
+            <Input
+              type="text"
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </FormField>
+          <FormField>
+            <Label htmlFor="price">Price</Label>
+            <Input
+              type="text"
+              id="price"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+            />
+          </FormField>
+
           <FormField>
             <Button color="primary" type="submit">
               {isLoading ? "Loading..." : "Submit Book"}
