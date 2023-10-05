@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 // import ReactMarkdown from "react-markdown";
-import { Button, Error, FormField, Input, Label, Textarea } from "../styles";
+import { Button, Error, FormField, Input, Label} from "../styles";
 
 function Cart({ user }) {
   const [title, setTitle] = useState();  
@@ -11,21 +11,9 @@ function Cart({ user }) {
   const [category, setCategory] = useState();
   const [description, setDescription] = useState();
   const [price, setPrice] = useState();
-  const [sold, setSold] = useState("n");
+  // const [sold, setSold] = useState("n");
   // const [user,setUser]= useState()
 
-  const [minutesToComplete, setMinutesToComplete] = useState("30");
-  const [instructions, setInstructions] = useState(`Here's how you make it.
-  
-## Ingredients
-
-- 1c Sugar
-- 1c Spice
-
-## Instructions
-
-**Mix** sugar and spice. _Bake_ for 30 minutes.
-  `);
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const history = useNavigate();
@@ -46,7 +34,7 @@ function Cart({ user }) {
         category,
         description,
         price,
-        sold,  
+        sold:"n",  
         user_id:user.id
       }),
     }).then((r) => {
@@ -136,7 +124,7 @@ function Cart({ user }) {
       <WrapperChild>
         <h1>{title}</h1>
         <p>
-          <em>Time to Complete: {minutesToComplete} minutes</em>
+          {/* <em>Time to Complete: {minutesToComplete} minutes</em> */}
           &nbsp;·&nbsp;
           {/* <cite>By {user.username}</cite> */}
         </p>

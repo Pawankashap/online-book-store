@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Button,Label } from "../styles";
-import { NavLink } from "react-router-dom"
+
 
 function NavBar({ user, setUser }) {
   function handleLogoutClick() {
