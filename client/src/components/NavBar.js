@@ -23,8 +23,7 @@ function NavBar({ user, setUser }) {
         <Button as={Link} to="/books">Books</Button>
         <Button as={Link} to="/order">Order</Button>
         <Button as={Link} to="/new">New Book  </Button>
-        <Button variant="outline" as={Link} to="/cart" >Cart Items</Button>
-        <Link className="cartitem" to="/cart">Cart Items</Link>
+        <Button variant="outlinelogin" as={Link} to="/cart" >Cart Items</Button>
         <Label htmlFor="title">{user.username}</Label>
         <Button variant="outline" onClick={handleLogoutClick}>
           Logout
