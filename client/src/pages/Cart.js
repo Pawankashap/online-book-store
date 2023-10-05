@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 // import ReactMarkdown from "react-markdown";
-import { Button, Error, FormField, Input, Label} from "../styles";
+import { Button, Error, FormField, Input, Label,Box,Textarea} from "../styles";
 
-function Cart({ user }) {
-  const [title, setTitle] = useState();  
+function Cart({ user,setCart,cart }) {
+  const [shippinginfo, setShippingInfo] = useState('');  
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [author, setAuthor] = useState();
   const [image_url, setImage_url] = useState();
   const [category, setCategory] = useState();
@@ -17,25 +18,36 @@ function Cart({ user }) {
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const history = useNavigate();
-
+  // console.log(cart);
   function handleSubmit(e) {
     e.preventDefault();
     setIsLoading(true);
     console.log({user})
-    fetch("/books", {
+    console.log(cart)
+    console.log(shippinginfo)
+
+    const dataToSave = cart.map((item) => ({
+      orderdt: currentDate.toDateString(),
+      book_id: item.id,
+      user_id: item.user_id,
+      shippinginfo,
+    }))
+    // shippinginfo:shipinfo,
+    // setCart([...cart, book]);
+
+    console.log(dataToSave)
+
+    fetch("/orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        title,
-        author,
-        image_url,
-        category,
-        description,
-        price,
-        sold:"n",  
-        user_id:user.id
+
+        shippinginfo : dataToSave.shippinginfo || '', 
+        orderdt: dataToSave.orderdt,
+        book_id: dataToSave.book_id,
+        user_id: dataToSave.user_id
       }),
     }).then((r) => {
       setIsLoading(false);
@@ -48,102 +60,79 @@ function Cart({ user }) {
     });
   }
 
+  const removeFromCart = (book) => {
+    const updatedCart = cart.filter((cartItem) => cartItem.id !== book.id);
+    setCart(updatedCart);
+  };
+  
   return (
-    <Wrapper>
-      <WrapperChild>
-        <h2>Create Book</h2>
-        <form onSubmit={handleSubmit}>
-          <FormField>
-            <Label htmlFor="title">Title</Label>
-            <Input
-              type="text"
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </FormField>
-          <FormField>
-            <Label htmlFor="author">Author</Label>
-            <Input
-              type="text"
-              id="author"
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
-            />
-          </FormField>
-          <FormField>
-            <Label htmlFor="image_url">Image URL</Label>
-            <Input
-              type="text"
-              id="image_url"
-              value={image_url}
-              onChange={(e) => setImage_url(e.target.value)}
-            />
-          </FormField>
+    <CartWrapper>
+      <h2>Cart</h2>
+      {cart.length > 0 ? (
+        <ul>
+          {cart.map((item) => (
+            <li key={item.id}>
+              <p>{item.title}</p>
+              <p>Price: {item.price}</p>
+              <button onClick={() => removeFromCart(item)}>Remove</button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>Your cart is empty.</p>
+      )}
+      <Textarea
+        id="shippinginfo" 
+        rows="4"
+        value={shippinginfo}
+        onChange={(e) => setShippingInfo(e.target.value)}
+      >
 
-          <FormField>
-            <Label htmlFor="category">Category</Label>
-            <Input
-              type="text"
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            />
-          </FormField>
-          <FormField>
-            <Label htmlFor="description">Description</Label>
-            <Input
-              type="text"
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </FormField>
-          <FormField>
-            <Label htmlFor="price">Price</Label>
-            <Input
-              type="text"
-              id="price"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
-          </FormField>
-
-          <FormField>
-            <Button color="primary" type="submit">
-              {isLoading ? "Loading..." : "Submit Book"}
-            </Button>
-          </FormField>
-          <FormField>
-            {errors.map((err) => (
-              <Error key={err}>{err}</Error>
-            ))}
-          </FormField>
-        </form>
-      </WrapperChild>
-      <WrapperChild>
-        <h1>{title}</h1>
-        <p>
-          {/* <em>Time to Complete: {minutesToComplete} minutes</em> */}
-          &nbsp;·&nbsp;
-          {/* <cite>By {user.username}</cite> */}
-        </p>
-        {/* <ReactMarkdown>{instructions}</ReactMarkdown> */}
-      </WrapperChild>
-    </Wrapper>
+      </Textarea>
+      <button onClick={handleSubmit}>Place Order</button>
+      {/* <Button as={Link} to="/order">
+            Place Order
+          </Button> */}
+    </CartWrapper>
   );
 }
 
-const Wrapper = styled.section`
-  max-width: 1000px;
-  margin: 40px auto;
-  padding: 16px;
-  display: flex;
-  gap: 24px;
+const CartWrapper = styled.div`
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  button {
+    background-color: #ff4444;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
 `;
 
-const WrapperChild = styled.div`
-  flex: 1;
-`;
 
 export default Cart;
