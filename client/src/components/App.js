@@ -10,6 +10,8 @@ import Order from "../pages/Order";
 function App() {
   const [user, setUser] = useState(null);
 
+  const [cart, setCart] = useState([]);
+
   useEffect(() => {
     // auto-login
     fetch("/check_session").then((r) => {
@@ -29,9 +31,9 @@ function App() {
 
             <Route path="/books"  element={<BooksList user={user} />} />
             <Route path="/order"  element={<Order user={user} />} />
-            <Route path="/cart"  element={<Carts user={user} />} />
+            <Route path="/cart"  element={<Carts user={user} setCart={setCart} cart={cart}  />} />
             <Route path="/new"  element={<Books user={user} />} />
-            <Route path="/" element={<BooksList />} />
+            <Route path="/" element={<BooksList setCart={setCart} cart={cart} />} />
         </Routes>
       </main>
     </>
