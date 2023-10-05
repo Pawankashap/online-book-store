@@ -240,10 +240,12 @@ api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Logout, '/logout', endpoint='logout')
 
-@app.route('/')
-@app.route('/<int:id>')
-def index(id=0):
-    return render_template("index.html")
+
+
+# @app.route('/')
+# @app.route('/<int:id>')
+# def index(id=0):
+#     return render_template("index.html")
 
 
 if __name__ == "__main__":
