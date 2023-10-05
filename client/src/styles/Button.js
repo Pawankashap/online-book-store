@@ -17,7 +17,9 @@ function Button({ variant = "fill", color = "primary", ...props }) {
     Component = FillButton;
   } else if (variant === "outline") {
     Component = OutlineButton;
-  }
+  }else if (variant === "outlinelogin") {
+    Component = OutlineButtonlogin;
+  }  
 
   return <Component style={COLORS[color]} {...props} />;
 }
@@ -44,6 +46,17 @@ const OutlineButton = styled(ButtonBase)`
   background-color: white;
   color: var(--main);
   border: 2px solid var(--main);
+
+  &:hover {
+    background: hsl(235deg 85% 97%);
+  }
+`;
+
+
+const OutlineButtonlogin = styled(ButtonBase)`
+  background-color: white;
+  color: var(--main);
+  // border: 2px solid var(--main);
 
   &:hover {
     background: hsl(235deg 85% 97%);
