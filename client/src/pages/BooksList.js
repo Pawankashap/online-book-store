@@ -4,14 +4,25 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Box, Button } from "../styles";
 
-function BooksList() {
+function BooksList({setCart,cart}) {
   const [books, setBooks] = useState([]);
+  // const [cart, setCart] = useState([]);
 
   useEffect(() => {
     fetch("/books")
       .then((r) => r.json())
       .then(setBooks);
   }, []);
+
+  const addToCart = (book) => {
+    setCart([...cart, book]);
+  };
+
+  const removeFromCart = (book) => {
+    const updatedCart = cart.filter((cartItem) => cartItem.id !== book.id);
+    setCart(updatedCart);
+  };
+
 
   return (
     <Wrapper>
@@ -21,11 +32,22 @@ function BooksList() {
             <Box>
               <h2>{book.title}</h2>
               <p>
-                <em>Time to Complete: {book.minutes_to_complete} minutes</em>
-                &nbsp;·&nbsp;
-                <cite>By {book.user.username}</cite>
+                <em>Category: {book.category}</em> &nbsp;·&nbsp; Price : {book.price}
               </p>
+              <p>
+                <em>Description: {book.description} minutes</em>
+                &nbsp;·&nbsp;
+                <cite>By {book.author}</cite>
+              </p>
+              {/* <b>{book.sold}</b> */}
               {/* <ReactMarkdown>{recipe.instructions}</ReactMarkdown> */}
+              <Link >
+                {cart.find((cartItem) => cartItem.id === book.id) ? (
+                  <button onClick={() => removeFromCart(book)}>Remove from Cart</button>
+                ) : (
+                  <button onClick={() => addToCart(book)}>Add to Cart</button>
+                )}
+              </Link>
             </Box>
           </Book>
         ))
