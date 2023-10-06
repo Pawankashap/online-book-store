@@ -8,7 +8,7 @@ function Books({ user }) {
   const [title, setTitle] = useState();  
   const [author, setAuthor] = useState();
   const [image_url, setImage_url] = useState();
-  const [category, setCategory] = useState();
+  const [category, setCategory] = useState("");
   const [description, setDescription] = useState();
   const [price, setPrice] = useState();
   // const [sold, setSold] = useState("n");
@@ -48,6 +48,24 @@ function Books({ user }) {
     });
   }
 
+  const categoryOptions = [
+    "Biography",
+    "Cooking",
+    "Art & Photography",
+    "Motivational/Inspirational",
+    "Health & Fitness",
+    "History",
+    "Families & Relationships",
+    "Humor & Entertainment",
+    "Business & Money",
+    "Law & Criminology",
+    "Politics & Social Sciences",
+    "Religion & Spirituality",
+    "Education & Teaching",
+    "Travel",
+    "Childrens Fiction"
+  ];
+
   return (
     <Wrapper>
       <WrapperChild>
@@ -83,12 +101,18 @@ function Books({ user }) {
 
           <FormField>
             <Label htmlFor="category">Category</Label>
-            <Input
-              type="text"
+            <Select
               id="category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-            />
+            >
+              <option value="">Select a category</option>
+              {categoryOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </Select>
           </FormField>
           <FormField>
             <Label htmlFor="description">Description</Label>
@@ -144,6 +168,19 @@ const Wrapper = styled.section`
 
 const WrapperChild = styled.div`
   flex: 1;
+`;
+
+const Select = styled.select`
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+
+  &:focus {
+    border-color: #007bff;
+  }
 `;
 
 export default Books;
