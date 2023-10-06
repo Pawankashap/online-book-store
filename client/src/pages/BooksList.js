@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Box, Button } from "../styles";
 
-function BooksList({setCart,cart}) {
+function BooksList({setCart,cart,user}) {
   const [books, setBooks] = useState([]);
   // const [cart, setCart] = useState([]);
 
