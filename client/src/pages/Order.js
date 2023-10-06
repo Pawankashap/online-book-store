@@ -1,149 +1,77 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 // import ReactMarkdown from "react-markdown";
-import { Button, Error, FormField, Input, Label } from "../styles";
+import { Button,Box} from "../styles";
 
 function Order({ user }) {
-  const [title, setTitle] = useState();  
-  const [author, setAuthor] = useState();
-  const [image_url, setImage_url] = useState();
-  const [category, setCategory] = useState();
-  const [description, setDescription] = useState();
-  const [price, setPrice] = useState();
-  // const [sold, setSold] = useState("n");
-  // const [user,setUser]= useState()
+  const [ordersbyid, setOrderbyId] = useState([]);
+  // const [cart, setCart] = useState([]);
 
-  const [errors, setErrors] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const history = useNavigate();
+  useEffect(() => {
+    fetch("/ordersbyid")
+      .then((r) => r.json())
+      .then((data) => {
+        console.log("run user effect")
+        console.log(data); // Log the data to the console
+        setOrderbyId(data);
+      });
+  }, []);
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    setIsLoading(true);
-    console.log({user})
-    fetch("/books", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        author,
-        image_url,
-        category,
-        description,
-        price,
-        sold:"n",  
-        user_id:user.id
-      }),
-    }).then((r) => {
-      setIsLoading(false);
-      if (r.ok) {
-        // history.push("/");
-        history('/');
-      } else {
-        r.json().then((err) => setErrors(err.errors));
-      }
-    });
-  }
+  // const addToCart = (book) => {
+  //   setCart([...cart, book]);
+  // };
+
+  // const removeFromCart = (book) => {
+  //   const updatedCart = cart.filter((cartItem) => cartItem.id !== book.id);
+  //   setCart(updatedCart);
+  // };
+  const formatDate = (dateString) => {
+    const options = { day: "numeric", month: "numeric", year: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+  debugger
 
   return (
     <Wrapper>
-      <WrapperChild>
-        <h2>Create Book</h2>
-        <form onSubmit={handleSubmit}>
-          <FormField>
-            <Label htmlFor="title">Title</Label>
-            <Input
-              type="text"
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </FormField>
-          <FormField>
-            <Label htmlFor="author">Author</Label>
-            <Input
-              type="text"
-              id="author"
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
-            />
-          </FormField>
-          <FormField>
-            <Label htmlFor="image_url">Image URL</Label>
-            <Input
-              type="text"
-              id="image_url"
-              value={image_url}
-              onChange={(e) => setImage_url(e.target.value)}
-            />
-          </FormField>
-
-          <FormField>
-            <Label htmlFor="category">Category</Label>
-            <Input
-              type="text"
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            />
-          </FormField>
-          <FormField>
-            <Label htmlFor="description">Description</Label>
-            <Input
-              type="text"
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </FormField>
-          <FormField>
-            <Label htmlFor="price">Price</Label>
-            <Input
-              type="text"
-              id="price"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
-          </FormField>
-
-          <FormField>
-            <Button color="primary" type="submit">
-              {isLoading ? "Loading..." : "Submit Book"}
-            </Button>
-          </FormField>
-          <FormField>
-            {errors.map((err) => (
-              <Error key={err}>{err}</Error>
-            ))}
-          </FormField>
-        </form>
-      </WrapperChild>
-      <WrapperChild>
-        <h1>{title}</h1>
-        <p>
-          {/* <em>Time to Complete: {minutesToComplete} minutes</em> */}
-          &nbsp;·&nbsp;
-          {/* <cite>By {user.username}</cite> */}
-        </p>
-        {/* <ReactMarkdown>{instructions}</ReactMarkdown> */}
-      </WrapperChild>
+      <h2>Orders</h2>
+      {ordersbyid.length > 0 ? (
+        ordersbyid.map((order) => (
+          <Book key={order.id}>
+            <Box>
+              <h2>Order No. {order.id}            Order Date: {formatDate(order.orderdt)}</h2>
+              <h3>Book: {order.book.title}</h3>
+              <p>
+                <em>Description: {order.book.category}</em> &nbsp;·&nbsp; Price : {order.book.price}
+              </p>
+              <p>
+                <em>Shipping info: {order.shippinginfo} minutes</em>
+                &nbsp;·&nbsp;
+                {/* <cite>By {order.author}</cite> */}
+              </p>
+            </Box>
+          </Book>
+        ))
+      ) : (
+        <>
+          <h2>No Books Found</h2>
+          <Button as={Link} to="/new">
+            Order Not Found
+          </Button>
+        </>
+      )}
     </Wrapper>
   );
 }
 
 const Wrapper = styled.section`
-  max-width: 1000px;
+  max-width: 800px;
   margin: 40px auto;
-  padding: 16px;
-  display: flex;
-  gap: 24px;
 `;
 
-const WrapperChild = styled.div`
-  flex: 1;
+const Book = styled.article`
+  margin-bottom: 24px;
 `;
 
 export default Order;
