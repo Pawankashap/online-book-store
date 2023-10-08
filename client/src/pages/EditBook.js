@@ -29,7 +29,7 @@ function EditBook() {
       .catch((error) => {
         console.error("Error fetching book data:", error);
       });
-  }, [formik]);
+  }, [id]);
 
   const validationSchema = Yup.object({
     title: Yup.string().required("Title is required"),
