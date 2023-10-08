@@ -17,11 +17,15 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
     _password_hash = db.Column(db.String)
-    email = db.Column(db.String)
+    email = db.Column(db.String, unique=True)
     usertype = db.Column(db.String, default='u')
 
     books = db.relationship("Book", backref="user")
     orders = db.relationship("Order", backref="user")
+
+    __table_args__ = (
+        db.CheckConstraint('usertype IN ("u", "a")', name='check_usertype'),
+    )
 
     @validates('email')
     def validate_email(self, key, address):
@@ -52,20 +56,21 @@ class Book(db.Model, SerializerMixin):
         "-orders"
     )
 
-
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
     author = db.Column(db.String, nullable=False)
     image_url = db.Column(db.String, nullable=False)
     category = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=False)
-    price = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Numeric(precision=10, scale=2), nullable=False, server_default='0.00')
     sold = db.Column(db.String)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-
     cart_items = db.relationship("CartItem", backref="book")
     orders = db.relationship("Order", backref="book")
-
+    
+    __table_args__ = (
+        db.CheckConstraint('price >= 0', name='check_positive_price'),
+    )
 
     def __repr__(self):
         return f"<Book: {self.id}, {self.title}"

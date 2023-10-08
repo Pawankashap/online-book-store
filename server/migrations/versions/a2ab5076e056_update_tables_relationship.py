@@ -25,7 +25,7 @@ def upgrade():
         batch_op.add_column(sa.Column('sold', sa.String(), nullable=True))
         batch_op.add_column(sa.Column('user_id', sa.Integer(), nullable=False))
         batch_op.alter_column('price',
-               existing_type=sa.INTEGER(),
+               existing_type=sa.String(),
                type_=sa.String(),
                existing_nullable=False)
         batch_op.create_foreign_key(batch_op.f('fk_books_user_id_users'), 'users', ['user_id'], ['id'])
