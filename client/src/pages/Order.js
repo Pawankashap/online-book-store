@@ -14,7 +14,7 @@ function Order({ user }) {
         console.log(data); // Log the data to the console
         setOrderbyId(data);
       });
-  }, []);
+  }, [user.id]);
 
   const formatDate = (dateString) => {
     const options = { day: "numeric", month: "numeric", year: "numeric" };

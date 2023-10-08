@@ -117,7 +117,7 @@ function Cart({ user,setCart,cart }) {
         onChange={(e) => setShippingInfo(e.target.value)}
       >
       </Textarea>
-      <button onClick={handleSubmit}>Place Order</button>
+      <button  onClick={handleSubmit}>{isLoading ? "Loading..." : "Place Order"}</button>
     </CartWrapper>
   );
 }

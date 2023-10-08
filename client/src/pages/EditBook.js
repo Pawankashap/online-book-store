@@ -7,7 +7,6 @@ import { Button, Error, FormField, Label, Input} from "../styles";
 
 function EditBook() {
   const { id } = useParams();
-  const [book, setBook] = useState({});
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -25,13 +24,12 @@ function EditBook() {
     fetch(`/booksbyid/${id}`)
       .then((response) => response.json())
       .then((data) => {
-        setBook(data);
         formik.setValues(data);
       })
       .catch((error) => {
         console.error("Error fetching book data:", error);
       });
-  }, [id]);
+  }, [formik]);
 
   const validationSchema = Yup.object({
     title: Yup.string().required("Title is required"),

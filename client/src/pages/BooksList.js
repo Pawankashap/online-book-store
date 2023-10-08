@@ -111,6 +111,7 @@ function BooksList({setCart,cart,user}) {
         books.map((book) => (
           <Book key={book.id}>
             <Box>
+              <Image src={book.image_url} alt={`Cover for ${book.title}`} />
               <h2>{book.title}</h2>
               <p>
                 <em>Category: {book.category}</em> &nbsp;·&nbsp; Price : {book.price}
@@ -149,6 +150,7 @@ const Wrapper = styled.section`
 
 const Book = styled.article`
   margin-bottom: 24px;
+  display: flex; /* Make the book content flex to align image and details */
 `;
 
 const SortDropdown = styled.div`
@@ -168,5 +170,9 @@ const SearchBar = styled.div`
     margin-right: 10px;
   }
 `;
-
+const Image = styled.img`
+  max-width: 200px; /* Adjust the maximum width as needed */
+  max-height: 200px;
+  height: auto;     /* Maintain the image's aspect ratio */
+`;
 export default BooksList;
