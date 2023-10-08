@@ -1,53 +1,67 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-// import ReactMarkdown from "react-markdown";
-import { Button, Error, FormField, Input, Label} from "../styles";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { Button, Error, FormField, Label, Input} from "../styles";
+
 
 function Books({ user }) {
-  const [title, setTitle] = useState();  
-  const [author, setAuthor] = useState();
-  const [image_url, setImage_url] = useState();
-  const [category, setCategory] = useState("");
-  const [description, setDescription] = useState();
-  const [price, setPrice] = useState();
-  // const [sold, setSold] = useState("n");
-  // const [user,setUser]= useState()
-
-  const [errors, setErrors] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const history = useNavigate();
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    setIsLoading(true);
-    console.log({user})
-    fetch("/books", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        author,
-        image_url,
-        category,
-        description,
-        price,
-        sold:"n",  
-        user_id:user.id
-      }),
-    }).then((r) => {
-      setIsLoading(false);
-      if (r.ok) {
-        // history.push("/");
-        history('/');
-      } else {
-        r.json().then((err) => setErrors(err.errors));
-      }
-    });
-  }
-
+  const navigate = useNavigate();
+  const formik = useFormik({
+    initialValues: {
+      title: "",
+      author: "",
+      image_url: "",
+      category: "",
+      description: "",
+      price: "",
+    },
+    validationSchema: Yup.object({
+      title: Yup.string()
+        .required("Title is required"),
+      author: Yup.string()
+        .required("Author is required"),
+      image_url: Yup.string()
+        .url("Invalid URL format").required("Image URL is required"),
+      category: Yup.string()
+        .required("Category is required"),
+      description: Yup.string()
+        .required("Description is required"),
+      price: Yup.number()
+        .typeError("Price must be a number")
+        .required("Price is required")
+        .positive("Price must be positive"),
+    }),
+    onSubmit: (values, { setSubmitting, setErrors }) => {
+      fetch("/books", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...values,
+          sold: "n",
+          user_id: user.id,
+        }),
+      })
+        .then((r) => {
+          setSubmitting(false);
+          if (r.ok) {
+            navigate("/");
+          } else {
+            r.json().then((err) => {
+              setErrors([err.error]);
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error occurred:", error);
+          setSubmitting(false);
+        });
+        debugger
+    },
+  });
   const categoryOptions = [
     "Biography",
     "Cooking",
@@ -70,90 +84,113 @@ function Books({ user }) {
     <Wrapper>
       <WrapperChild>
         <h2>Create Book</h2>
-        <form onSubmit={handleSubmit}>
+      {user.usertype === 'a' ? (  
+        <form onSubmit={formik.handleSubmit}>
           <FormField>
             <Label htmlFor="title">Title</Label>
-            <Input
+            <Input  
               type="text"
               id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              name="title"
+              autoComplete="off"
+              {...formik.getFieldProps("title")}
             />
+            {formik.touched.title && formik.errors.title ? (
+              <Error>{formik.errors.title}</Error>
+            ) : null}
           </FormField>
+
           <FormField>
             <Label htmlFor="author">Author</Label>
             <Input
               type="text"
               id="author"
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
+              name="author"
+              autoComplete="off"
+              {...formik.getFieldProps("author")}
             />
+            {formik.touched.author && formik.errors.author ? (
+              <Error>{formik.errors.author}</Error>
+            ) : null}
           </FormField>
+
           <FormField>
-            <Label htmlFor="image_url">Image URL</Label>
+            <Label htmlFor="image_url">Image UR</Label>
             <Input
               type="text"
               id="image_url"
-              value={image_url}
-              onChange={(e) => setImage_url(e.target.value)}
+              name="image_url"
+              autoComplete="off"
+              {...formik.getFieldProps("image_url")}
             />
+            {formik.touched.image_url && formik.errors.image_url ? (
+              <Error>{formik.errors.image_url}</Error>
+            ) : null}
           </FormField>
 
           <FormField>
             <Label htmlFor="category">Category</Label>
-            <Select
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              <option value="">Select a category</option>
-              {categoryOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </Select>
+              <Select
+                id="category"
+                name="category"
+                value={formik.values.category}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                {...formik.getFieldProps("category")}
+              >
+                <option value="">Select a category</option>
+                {categoryOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </Select>
+              {formik.touched.category && formik.errors.category ? (
+                <Error>{formik.errors.category}</Error>
+              ) : null}
           </FormField>
+
           <FormField>
             <Label htmlFor="description">Description</Label>
             <Input
-              type="text"
+              as="textarea"
+              rows="3"
               id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              name="description"
+              {...formik.getFieldProps("description")}
             />
+            {formik.touched.description && formik.errors.description ? (
+              <Error>{formik.errors.description}</Error>
+            ) : null}
           </FormField>
           <FormField>
             <Label htmlFor="price">Price</Label>
             <Input
               type="text"
               id="price"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
+              name="price"
+              {...formik.getFieldProps("price")}
             />
+            {formik.touched.price && formik.errors.price ? (
+              <Error>{formik.errors.price}</Error>
+            ) : null}
           </FormField>
 
           <FormField>
-            <Button color="primary" type="submit">
-              {isLoading ? "Loading..." : "Submit Book"}
+            <Button type="submit" disabled={formik.isSubmitting}>
+              {formik.isSubmitting ? "Loading..." : "Add New Book"}
             </Button>
+            &nbsp;&nbsp;
+            <Button onClick={() => navigate("/delete")}>Edit and Delete Books</Button>
+            
           </FormField>
           <FormField>
-            {errors.map((err) => (
-              <Error key={err}>{err}</Error>
-            ))}
+            {formik.errors.serverError && <Error>{formik.errors.serverError}</Error>}
           </FormField>
         </form>
+         ) : <Label>You are not authorized to create books.</Label> }
       </WrapperChild>
-      <WrapperChild>
-        <h1>{title}</h1>
-        <p>
-          {/* <em>Time to Complete: {minutesToComplete} minutes</em> */}
-          &nbsp;·&nbsp;
-          {/* <cite>By {user.username}</cite> */}
-        </p>
-        {/* <ReactMarkdown>{instructions}</ReactMarkdown> */}
-      </WrapperChild>
+     
     </Wrapper>
   );
 }

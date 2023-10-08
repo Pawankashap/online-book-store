@@ -1,58 +1,71 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-// import ReactMarkdown from "react-markdown";
-import { Button, Error, FormField, Input, Label,Box,Textarea} from "../styles";
+import { Textarea} from "../styles";
 
 function Cart({ user,setCart,cart }) {
   const [shippinginfo, setShippingInfo] = useState('');  
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [author, setAuthor] = useState();
-  const [image_url, setImage_url] = useState();
-  const [category, setCategory] = useState();
-  const [description, setDescription] = useState();
-  const [price, setPrice] = useState();
-  // const [sold, setSold] = useState("n");
-  // const [user,setUser]= useState()
-
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const history = useNavigate();
-  // console.log(cart);
+
+  useEffect(() => {
+    setCart((cart) => []);
+    fetch(`/citemsbyid/${user.id}`) 
+      .then((response) => response.json())
+      .then((data) => {
+        const titlesToAdd = data.map((item) => ({
+          id: item.book_id,
+          price: item.book.price,
+          title: item.book.title
+        }));
+        setCart([...titlesToAdd]);
+      })
+      .catch((error) => {
+        console.error("Error fetching cart items:", error);
+      });
+  }, [user.id, setCart]);
+
+  function clearCartInDatabase(userId) {
+    console.log(`/citemsbyid/${user.id}`)
+    fetch(`/citemsbyid/${user.id}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (response.ok) {
+          setCart([]);
+        } else {
+          console.error("Failed to clear cart in the database.");
+        }
+      })
+      .catch((error) => {
+        console.error("Network error:", error);
+      });
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
     setIsLoading(true);
-    console.log({user})
-    console.log(cart)
-    console.log(shippinginfo)
-
-    const dataToSave = cart.map((item) => ({
+    const newDataToSave = cart.map((item) => ({
+      shippinginfo: shippinginfo,
       orderdt: currentDate.toDateString(),
       book_id: item.id,
-      user_id: item.user_id,
-      shippinginfo,
-    }))
-    // shippinginfo:shipinfo,
-    // setCart([...cart, book]);
-
-    console.log(dataToSave)
-
+      user_id: user.id
+    }));
+    console.log(newDataToSave)
     fetch("/orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-
-        shippinginfo : dataToSave.shippinginfo || '', 
-        orderdt: dataToSave.orderdt,
-        book_id: dataToSave.book_id,
-        user_id: dataToSave.user_id
-      }),
+      body: JSON.stringify(newDataToSave),
     }).then((r) => {
       setIsLoading(false);
       if (r.ok) {
-        // history.push("/");
+        setCart([]);
+        clearCartInDatabase(newDataToSave.user_id);
+        console.log(cart)
         history('/');
       } else {
         r.json().then((err) => setErrors(err.errors));
@@ -61,8 +74,23 @@ function Cart({ user,setCart,cart }) {
   }
 
   const removeFromCart = (book) => {
-    const updatedCart = cart.filter((cartItem) => cartItem.id !== book.id);
-    setCart(updatedCart);
+    DeleteCartItems(book);
+  };
+  const DeleteCartItems = (book) => {
+    fetch(`/citemsdel/${user.id}/${book.id}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (response.ok) {
+          const updatedCart = cart.filter((cartItem) => cartItem.id !== book.id);
+          setCart(updatedCart);
+        } else {
+          console.error("Failed to delete book.");
+        }
+      })
+      .catch((error) => {
+        console.error("Network error:", error);
+      });
   };
   
   return (
@@ -81,18 +109,15 @@ function Cart({ user,setCart,cart }) {
       ) : (
         <p>Your cart is empty.</p>
       )}
+      <h3>Shipping Address</h3>
       <Textarea
         id="shippinginfo" 
         rows="4"
         value={shippinginfo}
         onChange={(e) => setShippingInfo(e.target.value)}
       >
-
       </Textarea>
       <button onClick={handleSubmit}>Place Order</button>
-      {/* <Button as={Link} to="/order">
-            Place Order
-          </Button> */}
     </CartWrapper>
   );
 }
