@@ -2,7 +2,7 @@ function Header() {
   return (
     <header>
       <h1>
-        Birdsy
+        Online BookStore
         <span className="logo" role="img">
           🕊
         </span>

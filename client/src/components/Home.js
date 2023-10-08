@@ -6,7 +6,6 @@ function Home({user}) {
     <div>
       <h1>Welcome to Online Book Store</h1>
       <img src={bannerImage} alt="Banner" style={{ width: "100%", height: "auto" }} />
-      {/* Add other content */}
     </div>
   );
 }
