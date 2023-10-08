@@ -10,6 +10,11 @@
 
 body {
   font-family: "Playfair Display", serif;
+  background-image: url('./Images/book_bg.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  /* Add other background properties as needed */
 }
 
 h2 {
@@ -161,3 +166,4 @@ input:focus {
   margin: 0 auto;
   padding: 20px;
 }
+
