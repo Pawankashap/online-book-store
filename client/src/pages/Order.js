@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-// import ReactMarkdown from "react-markdown";
 import { Button,Box} from "../styles";
 
 function Order({ user }) {
   const [ordersbyid, setOrderbyId] = useState([]);
-  // const [cart, setCart] = useState([]);
 
   useEffect(() => {
-    fetch("/ordersbyid")
+    fetch(`/ordersbyid/${user.id}`)
       .then((r) => r.json())
       .then((data) => {
         console.log("run user effect")
@@ -19,19 +16,10 @@ function Order({ user }) {
       });
   }, []);
 
-  // const addToCart = (book) => {
-  //   setCart([...cart, book]);
-  // };
-
-  // const removeFromCart = (book) => {
-  //   const updatedCart = cart.filter((cartItem) => cartItem.id !== book.id);
-  //   setCart(updatedCart);
-  // };
   const formatDate = (dateString) => {
     const options = { day: "numeric", month: "numeric", year: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
-  debugger
 
   return (
     <Wrapper>
@@ -40,7 +28,7 @@ function Order({ user }) {
         ordersbyid.map((order) => (
           <Book key={order.id}>
             <Box>
-              <h2>Order No. {order.id}            Order Date: {formatDate(order.orderdt)}</h2>
+              <h2>Order No. {order.id} &nbsp; Order Date: {formatDate(order.orderdt)}</h2>
               <h3>Book: {order.book.title}</h3>
               <p>
                 <em>Description: {order.book.category}</em> &nbsp;·&nbsp; Price : {order.book.price}
@@ -48,7 +36,6 @@ function Order({ user }) {
               <p>
                 <em>Shipping info: {order.shippinginfo} minutes</em>
                 &nbsp;·&nbsp;
-                {/* <cite>By {order.author}</cite> */}
               </p>
             </Box>
           </Book>
