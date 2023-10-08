@@ -7,21 +7,22 @@ import BooksList from "../pages/BooksList";
 import Books from "../pages/Books";
 import Carts from "../pages/Cart";
 import Order from "../pages/Order";
+import DeleteBook from "../pages/DeleteBook";
+import EditBook from "../pages/EditBook";
 
 function App() {
   const [user, setUser] = useState(null);
-
   const [cart, setCart] = useState([]);
 
   useEffect(() => {
-    // auto-login
     fetch("/check_session").then((r) => {
       if (r.ok) {
-        r.json().then((user) => setUser(user));
+        r.json().then((user) => setUser(user)); 
       }
     });
   }, []);
 
+debugger
   if (!user) return <Login onLogin={setUser} />;
   console.log(user)
   return (
@@ -29,6 +30,8 @@ function App() {
       <NavBar user={user} setUser={setUser} />
       <main>
         <Routes>
+            <Route path="/edit/:id" element={<EditBook user={user} / >} />
+            <Route path="/delete" element={<DeleteBook/>} />
             <Route path="/orderbyid"  element={<Order user={user} />} />
             <Route path="/books"  element={<BooksList setCart={setCart} cart={cart} user={user} />} />
             <Route path="/order"  element={<Order user={user} />} />
