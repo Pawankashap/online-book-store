@@ -40,13 +40,17 @@ class Signup(Resource):
         password = json.get("password")
         email = json.get("email")
         usertype = json.get("usertype")
+
         user = User(username=username, email=email, usertype=usertype)
+
         user.password_hash = password
+        print(user)
         try:
                 db.session.add(user)
                 db.session.commit()
                 session["user_id"] = user.id
                 return user.to_dict(), 201
+
         except IntegrityError:
                 return {"error": "422 Unprocessable Entity"}, 422
 
@@ -98,8 +102,7 @@ class Books(Resource):
             description=data['description'],
             price=data['price'],
             sold=data['sold'],
-            user_id=data['user_id'],
-            image_url=data['image_url']
+            user_id=data['user_id']
         )
         try:
             db.session.add(new_book)
