@@ -30,8 +30,8 @@ const ButtonBase = styled.button`
   border: 1px solid transparent;
   border-radius: 6px;
   padding: 8px 16px;
-  margin-left: 10px; 
-  margin-right: 10px; 
+  margin-left: 5px; 
+  margin-right: 5px; 
   text-decoration: none;
   verticalspce
 `;
@@ -48,7 +48,7 @@ const FillButton = styled(ButtonBase)`
 const OutlineButton = styled(ButtonBase)`
   background-color: white;
   color: var(--main);
-  border: 2px solid var(--main);
+  // border: 2px solid var(--main);
 
   &:hover {
     background: hsl(235deg 85% 97%);
@@ -65,5 +65,7 @@ const OutlineButtonlogin = styled(ButtonBase)`
     background: hsl(235deg 85% 97%);
   }
 `;
+
+
 
 export default Button;
