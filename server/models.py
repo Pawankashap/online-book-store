@@ -28,10 +28,10 @@ class User(db.Model, SerializerMixin):
     )
 
     @validates('email')
-    def validate_email(self, key, address):
-        if '@' not in address:
+    def validate_email(self, key, email):
+        if '@' not in email:
             raise ValueError("Failed simple email validation")
-        return address
+        return email
 
     @hybrid_property
     def password_hash(self):
@@ -59,7 +59,6 @@ class Book(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
     author = db.Column(db.String, nullable=False)
-    image_url = db.Column(db.String, nullable=False)
     category = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=False)
     price = db.Column(db.Numeric(precision=10, scale=2), nullable=False, server_default='0.00')
