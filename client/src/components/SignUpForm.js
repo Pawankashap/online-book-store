@@ -10,6 +10,7 @@ function SignUpForm({ onLogin }) {
       password: "",
       passwordConfirmation: "",
       email: "",
+      usertype: "u",
     },
     validationSchema: Yup.object({
       username: Yup.string()
@@ -23,6 +24,7 @@ function SignUpForm({ onLogin }) {
       email: Yup.string()
         .email("Invalid email address")
         .required("Email is required"),
+      usertype: Yup.string().required("User type is required"),
     }),
     onSubmit: (values, { setSubmitting, setErrors }) => {
       fetch("/signup", {
@@ -30,7 +32,15 @@ function SignUpForm({ onLogin }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          
+          username: values.username,
+          password: values.password,
+          password_confirmation: values.passwordConfirmation,
+          email: values.email,
+          usertype: values.usertype,
+  
+        }),
       })
         .then((response) => {
           setSubmitting(false);
@@ -106,6 +116,19 @@ function SignUpForm({ onLogin }) {
               <Error>{formik.errors.email}</Error>
             ) : null}
           </FormField>
+          {/* <FormField>
+            <Label htmlFor="usertype">User Type</Label>
+            <Input
+              as="textarea"
+              rows="3"
+              id="usertype"
+              name="usertype"
+              {...formik.getFieldProps("usertype")}
+            />
+            {formik.touched.usertype && formik.errors.usertype ? (
+              <Error>{formik.errors.usertype}</Error>
+            ) : null}
+          </FormField> */}
           <FormField>
             <Button type="submit" disabled={formik.isSubmitting}>
               {formik.isSubmitting ? "Loading..." : "Sign Up"}

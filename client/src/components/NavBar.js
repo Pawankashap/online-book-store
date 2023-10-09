@@ -34,15 +34,28 @@ function NavBar({ user, setUser }) {
 
 const Wrapper = styled.header`
   display: flex;
-  justify-content: center;
+  // justify-content: center;
   align-items: center;
   padding: 8px;
 `;
 
+// const Logo = styled.h1`
+//   font-family: "Permanent Marker", cursive;
+//   font-size: 3rem;
+//   color: purple;
+//   margin: 0;
+//   line-height: 1;
+
+//   a {
+//     color: inherit;
+//     text-decoration: none;
+//   }
+// `;
+
 const Logo = styled.h1`
   font-family: "Permanent Marker", cursive;
   font-size: 3rem;
-  color: deeppink;
+  color: purple;
   margin: 0;
   line-height: 1;
 
