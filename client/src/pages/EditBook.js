@@ -14,7 +14,6 @@ function EditBook() {
   const initialValues = {
     title: '',
     author: '',
-    image_url: '',
     category: '',
     description: '',
     price: 0,
@@ -34,7 +33,6 @@ function EditBook() {
   const validationSchema = Yup.object({
     title: Yup.string().required("Title is required"),
     author: Yup.string().required("Author is required"),
-    image_url: Yup.string().url("Invalid URL format").required("Image URL is required"),
     category: Yup.string().required("Category is required"),
     description: Yup.string().required("Description is required"),
     price: Yup.number().typeError("Price must be a number").required("Price is required").positive("Price must be positive"),
@@ -57,7 +55,6 @@ function EditBook() {
         body: JSON.stringify({
           title:values.title,
           author:values.author,
-          image_url: values.image_url,
           category: values.category,
           description: values.description,
           price: values.price
@@ -126,19 +123,6 @@ function EditBook() {
             />
             {formik.touched.author && formik.errors.author ? (
               <Error>{formik.errors.author}</Error>
-            ) : null}
-          </FormField>
-          <FormField>
-            <Label htmlFor="image_url">Image URL</Label>
-            <Input
-              name="image_url"
-              type="text"
-              id="image_url"
-              value={formik.values.image_url}
-              onChange={formik.handleChange}
-            />
-            {formik.touched.image_url && formik.errors.image_url ? (
-              <Error>{formik.errors.image_url}</Error>
             ) : null}
           </FormField>
           <FormField>

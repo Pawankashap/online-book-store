@@ -11,7 +11,6 @@ function Books({ user }) {
     initialValues: {
       title: "",
       author: "",
-      image_url: "",
       category: "",
       description: "",
       price: "",
@@ -21,8 +20,6 @@ function Books({ user }) {
         .required("Title is required"),
       author: Yup.string()
         .required("Author is required"),
-      image_url: Yup.string()
-        .url("Invalid URL format").required("Image URL is required"),
       category: Yup.string()
         .required("Category is required"),
       description: Yup.string()
@@ -110,20 +107,6 @@ function Books({ user }) {
             />
             {formik.touched.author && formik.errors.author ? (
               <Error>{formik.errors.author}</Error>
-            ) : null}
-          </FormField>
-
-          <FormField>
-            <Label htmlFor="image_url">Image UR</Label>
-            <Input
-              type="text"
-              id="image_url"
-              name="image_url"
-              autoComplete="off"
-              {...formik.getFieldProps("image_url")}
-            />
-            {formik.touched.image_url && formik.errors.image_url ? (
-              <Error>{formik.errors.image_url}</Error>
             ) : null}
           </FormField>
 
