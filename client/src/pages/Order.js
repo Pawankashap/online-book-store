@@ -31,7 +31,7 @@ function Order({ user }) {
               <h2>Order No. {order.id} &nbsp; Order Date: {formatDate(order.orderdt)}</h2>
               <h3>Book: {order.book.title}</h3>
               <p>
-                <em>Description: {order.book.category}</em> &nbsp;·&nbsp; Price : {order.book.price}
+                <em>Category: {order.book.category}</em> &nbsp;·&nbsp; Price : {order.book.price}
               </p>
               <p>
                 <em>Shipping info: {order.shippinginfo} minutes</em>
