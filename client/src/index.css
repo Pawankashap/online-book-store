@@ -10,10 +10,11 @@
 
 body {
   font-family: "Playfair Display", serif;
-  background-image: url('./Images/book_bg.jpg');
-  background-size: cover;
+  /* background-image: url('./Images/book_bg.jpg'); */
+  /* background-size: cover;
   background-repeat: no-repeat;
-  background-attachment: fixed;
+  background-attachment: fixed; */
+  background-color: lavender;
   /* Add other background properties as needed */
 }
 
