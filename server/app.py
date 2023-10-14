@@ -1,35 +1,10 @@
-import os
-
-from dotenv import load_dotenv
-load_dotenv()
 from flask import Flask, jsonify, request, make_response, render_template,session,abort
-from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from sqlalchemy.exc import IntegrityError
 
 from models import User,Book,Order,CartItem
 
 from config import app, db, api
-
-app = Flask(
-    __name__,
-    static_url_path='',
-    static_folder='../client/build',
-    template_folder='../client/build'
-)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.json.compact = False
-app.secret_key = b'Y\xf1Xz\x00\xad|eQ\x80t \xca\x1a\x10K'
-migrate = Migrate(app, db)
-db.init_app(app)
-
-@app.errorhandler(404)
-def not_found(e):
-    return render_template("index.html")
-
-api = Api(app)
 
 class Signup(Resource):
 
@@ -197,19 +172,20 @@ class Orders(Resource):
 
     def post(self):
         data = request.get_json()
-        if not isinstance(data,list):
-            return {"message": "Expected an array of orders."}, 400
         for order in data: 
-            new_order=Order(
+            try:
+                new_order = Order(
                 shippinginfo=order['shippinginfo'],
-                orderdt=order['orderdt'],
                 book_id=order['book_id'],
                 user_id=order['user_id']
-            )
+                )
+            except Exception as e:
+                db.session.rollback()  
+                return {"message": f"Error creating order: {str(e)}"}, 500
             db.session.add(new_order)
-        db.session.commit()
-        return {"message": "Orders created successfully."}, 201
-    
+            db.session.commit()
+            return {"message": "Orders created successfully."}, 201
+           
 class OrderByID(Resource):
     def get(self,id):
             orders = Order.query.filter(Order.user_id == id).all()
