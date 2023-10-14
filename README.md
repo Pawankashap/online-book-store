@@ -61,12 +61,12 @@ Follow these steps to install and run the project locally:
     5. pipenv install && pipenv shell
     6. pip install honcho
     7. pipenv install Flask gunicorn psycopg2-binary Flask-SQLAlchemy Flask-Migrate SQLAlchemy-Serializer Flask-RESTful
-    8. export DATABASE_URI=postgresql://a:CV7aM6vmncSdwBHSa7PfIGmLviTJg2yi@dpg-ckc8s2usmu8c73cdab40-a.oregon-postgres.render.com/book_store_lftj
-    9. honcho start -f Procfile.dev
+    8. honcho start -f Procfile.dev
+    
 ## Usage
 
 1. Register a New User Account or Log In as an Existing User:
-    To begin using the app, if you are a new user, please register for an account. You will need to provide your email, create a username, and set a password. If you are already a user, please log in using your registered email and password. It is important to note that the default username for existing users is "pawan" and the password is "123456789".
+    To begin using the app, if you are a new user, please register for an account. You will need to provide your email, create a username, and set a password. If you are already a user, please log in using your registered email and password. It is important to note that the default username for existing users is "Pawan Kashyap" and the password is "123456789".
 2. Browse and Search for Books: 
     After logging in, you will arrive at the homepage of the app. From there, you can start to explore the catalog. You can browse through books by either scrolling or utilizing the navigation menus that categorize books by genres, authors, or special categories. If you are searching for a particular book, you can use the search bar located at the top of the page. Simply type in the title, author, or relevant keywords to locate it quickly.
 3. Add Books to Your Shopping Cart and Proceed to Checkout:
@@ -110,9 +110,8 @@ In this folder, you will find all the components used in the React application, 
 
 ## Links
 
-**Website Online Link**
+https://unsplash.com/s/photos/bookstore
 
-https://book-store-fjqm.onrender.com/
 
 
 ## Contributing
