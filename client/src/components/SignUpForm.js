@@ -56,7 +56,6 @@ function SignUpForm({ onLogin }) {
           console.error("Error:", error);
           setSubmitting(false);
         });
-        debugger
     },
   });
 
