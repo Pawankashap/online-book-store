@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import validates
+from datetime import datetime
 
 from config import db, bcrypt
 
@@ -76,6 +77,7 @@ class Book(db.Model, SerializerMixin):
 
 class Order(db.Model, SerializerMixin):
     __tablename__ = 'orders'
+    
 
     id = db.Column(db.Integer, primary_key=True)
     shippinginfo = db.Column(db.String, nullable=False)
