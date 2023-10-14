@@ -5,7 +5,6 @@ import { Textarea} from "../styles";
 
 function Cart({ user,setCart,cart }) {
   const [shippinginfo, setShippingInfo] = useState('');  
-  const [currentDate, setCurrentDate] = useState(new Date());
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const history = useNavigate();
@@ -49,11 +48,11 @@ function Cart({ user,setCart,cart }) {
     setIsLoading(true);
     const newDataToSave = cart.map((item) => ({
       shippinginfo: shippinginfo,
-      orderdt: currentDate.toDateString(),
       book_id: item.id,
       user_id: user.id
     }));
     console.log(newDataToSave)
+    
     fetch("/orders", {
       method: "POST",
       headers: {
