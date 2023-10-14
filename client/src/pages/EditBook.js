@@ -44,8 +44,6 @@ function EditBook() {
     },
     validationSchema,
     onSubmit: (values) => {
-      console.log(values)
-      debugger
       setIsLoading(true);
       fetch(`/booksbyid/${id}`, {
         method: "PATCH",

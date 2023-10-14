@@ -55,7 +55,6 @@ function Books({ user }) {
           console.error("Error occurred:", error);
           setSubmitting(false);
         });
-        debugger
     },
   });
   const categoryOptions = [

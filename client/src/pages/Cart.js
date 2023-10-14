@@ -27,7 +27,6 @@ function Cart({ user,setCart,cart }) {
   }, [user.id, setCart]);
 
   function clearCartInDatabase(userId) {
-    console.log(`/citemsbyid/${user.id}`)
     fetch(`/citemsbyid/${user.id}`, {
       method: "DELETE",
     })
@@ -51,7 +50,6 @@ function Cart({ user,setCart,cart }) {
       book_id: item.id,
       user_id: user.id
     }));
-    console.log(newDataToSave)
     
     fetch("/orders", {
       method: "POST",
@@ -64,7 +62,6 @@ function Cart({ user,setCart,cart }) {
       if (r.ok) {
         setCart([]);
         clearCartInDatabase(newDataToSave.user_id);
-        console.log(cart)
         history('/');
       } else {
         r.json().then((err) => setErrors(err.errors));

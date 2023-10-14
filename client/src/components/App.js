@@ -22,9 +22,7 @@ function App() {
     });
   }, []);
 
-debugger
   if (!user) return <Login onLogin={setUser} />;
-  console.log(user)
   return (
     <>
       <NavBar user={user} setUser={setUser} />
